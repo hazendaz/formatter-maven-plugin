@@ -22,6 +22,7 @@ import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -976,6 +977,17 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
 
         this.getLog().debug("Using search path at: " + this.basedir.getAbsolutePath());
         this.resourceManager.addSearchPath(FileResourceLoader.ID, this.basedir.getAbsolutePath());
+
+        // Add parents
+        File parent = new File(Paths.get(this.basedir.toURI()).getParent() + File.separator + "pom.xml");
+        this.getLog().debug("Probing pom at: " + parent.getAbsolutePath());
+        while (parent.exists()) {
+            this.getLog().debug("Using search path at: " + parent.getParent());
+            this.resourceManager.addSearchPath(FileResourceLoader.ID, parent.getParent());
+
+            parent = new File(Paths.get(parent.toURI()).getParent().getParent() + File.separator + "pom.xml");
+            this.getLog().debug("Probing pom at: " + parent.getAbsolutePath());
+        }
 
         try (var configInput = this.resourceManager.getResourceAsInputStream(newConfigFile)) {
             return new ConfigReader().read(configInput);
