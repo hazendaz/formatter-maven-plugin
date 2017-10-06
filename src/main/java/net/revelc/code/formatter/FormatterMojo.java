@@ -86,8 +86,8 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     private static final String CACHE_PROPERTIES_FILENAME = "formatter-maven-cache.properties";
 
     /** The Constant DEFAULT_INCLUDES. */
-    private static final String[] DEFAULT_INCLUDES = { "**/*.css", "**/*.json", "**/*.html", "**/*.java", "**/*.js",
-            "**/*.xml" };
+    private static final String[] DEFAULT_INCLUDES = { "**/*.css", "**/*.json", "**/*.html", "**/*.xhtml", "**/*.java",
+            "**/*.js", "**/*.jsp", "**/*.jspx", "**/*.wsdl", "**/*.xml", "**/*.xsd" };
 
     /** The Constant REMOVE_TRAILING_PATTERN. */
     private static final Pattern REMOVE_TRAILING_PATTERN = Pattern.compile("\\p{Blank}+$", Pattern.MULTILINE);
@@ -744,14 +744,17 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
             } else {
                 formattedCode = this.jsFormatter.formatFile(file, originalCode, this.lineEnding);
             }
-        } else if (file.getName().endsWith(".html") && this.htmlFormatter.isInitialized()) {
+        } else if (file.getName().endsWith(".html") || file.getName().endsWith(".xhtml")
+                || file.getName().endsWith(".jsp")
+                || file.getName().endsWith(".jspx") && this.htmlFormatter.isInitialized()) {
             if (this.skipHtmlFormatting) {
                 log.debug(Type.HTML + FormatterMojo.FORMATTING_IS_SKIPPED);
                 result = Result.SKIPPED;
             } else {
                 formattedCode = this.htmlFormatter.formatFile(file, originalCode, this.lineEnding);
             }
-        } else if (file.getName().endsWith(".xml") && this.xmlFormatter.isInitialized()) {
+        } else if (file.getName().endsWith(".xml") || file.getName().endsWith(".wsdl")
+                || file.getName().endsWith(".xsd") && this.xmlFormatter.isInitialized()) {
             if (this.skipXmlFormatting) {
                 log.debug(Type.XML + FormatterMojo.FORMATTING_IS_SKIPPED);
                 result = Result.SKIPPED;
