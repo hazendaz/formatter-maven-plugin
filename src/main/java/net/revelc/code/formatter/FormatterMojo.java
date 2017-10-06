@@ -84,8 +84,8 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     private static final String CACHE_PROPERTIES_FILENAME = "formatter-maven-cache.properties";
 
     /** The Constant DEFAULT_INCLUDES. */
-    private static final String[] DEFAULT_INCLUDES = new String[] { "**/*.css", "**/*.json", "**/*.html", "**/*.java",
-            "**/*.js", "**/*.xml" };
+    private static final String[] DEFAULT_INCLUDES = new String[] { "**/*.css", "**/*.json", "**/*.html", "**/*.xhtml",
+            "**/*.java", "**/*.js", "**/*.jsp", "**/*.jspx", "**/*.wsdl", "**/*.xml", "**/*.xsd" };
 
     /**
      * ResourceManager for retrieving the configFile resource.
@@ -590,14 +590,17 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
             } else {
                 formattedCode = this.jsFormatter.formatFile(file, originalCode, this.lineEnding);
             }
-        } else if (file.getName().endsWith(".html") && htmlFormatter.isInitialized()) {
+        } else if (file.getName().endsWith(".html") || file.getName().endsWith(".xhtml")
+                || file.getName().endsWith(".jsp")
+                || file.getName().endsWith(".jspx") && htmlFormatter.isInitialized()) {
             if (skipHtmlFormatting) {
                 log.debug(Type.HTML + " formatting is skipped");
                 result = Result.SKIPPED;
             } else {
                 formattedCode = this.htmlFormatter.formatFile(file, originalCode, this.lineEnding);
             }
-        } else if (file.getName().endsWith(".xml") && xmlFormatter.isInitialized()) {
+        } else if (file.getName().endsWith(".xml") || file.getName().endsWith(".wsdl")
+                || file.getName().endsWith(".xsd") && xmlFormatter.isInitialized()) {
             if (skipXmlFormatting) {
                 log.debug(Type.XML + " formatting is skipped");
                 result = Result.SKIPPED;
