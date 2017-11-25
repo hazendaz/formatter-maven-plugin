@@ -582,6 +582,10 @@
                 <exclude>LICENSE</exclude>
                 <exclude>NOTICE</exclude>
                 <exclude>.gitattributes</exclude>
+                <exclude>**/*maven-wrapper.properties</exclude>
+                <exclude>**/*MavenWrapperDownloader.java</exclude>
+                <exclude>mvnw</exclude>
+                <exclude>mvnw.cmd</exclude>
               </excludes>
               <mapping>
                 <java>SLASHSTAR_STYLE</java>
