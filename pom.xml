@@ -184,6 +184,11 @@
     </dependency>
     <dependency>
       <groupId>net.revelc.code.formatter</groupId>
+      <artifactId>jdt-groovy</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>net.revelc.code.formatter</groupId>
       <artifactId>jsdt-core</artifactId>
       <version>3.5.0</version>
     </dependency>
@@ -211,11 +216,13 @@
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
     </dependency>
+    <!-- 
     <dependency>
       <groupId>org.eclipse.jdt</groupId>
       <artifactId>org.eclipse.jdt.core</artifactId>
       <version>3.41.0</version>
     </dependency>
+    -->
     <dependency>
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>

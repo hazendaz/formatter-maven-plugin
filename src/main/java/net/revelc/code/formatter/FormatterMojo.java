@@ -56,6 +56,7 @@ import org.xml.sax.SAXException;
 import com.google.common.hash.Hashing;
 
 import net.revelc.code.formatter.css.CssFormatter;
+import net.revelc.code.formatter.groovy.GroovyFormatter;
 import net.revelc.code.formatter.html.HTMLFormatter;
 import net.revelc.code.formatter.java.JavaFormatter;
 import net.revelc.code.formatter.javascript.JavascriptFormatter;
@@ -80,8 +81,8 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     private static final String CACHE_PROPERTIES_FILENAME = "formatter-maven-cache.properties";
 
     /** The Constant DEFAULT_INCLUDES. */
-    private static final String[] DEFAULT_INCLUDES = { "**/*.css", "**/*.json", "**/*.html", "**/*.java", "**/*.js",
-            "**/*.xml" };
+    private static final String[] DEFAULT_INCLUDES = { "**/*.css", "**/*.json", "**/*.groovy", "**/*.html",
+            "**/*.java", "**/*.js", "**/*.xml" };
 
     /** The Constant REMOVE_TRAILING_PATTERN. */
     private static final Pattern REMOVE_TRAILING_PATTERN = Pattern.compile("\\p{Blank}+$", Pattern.MULTILINE);
@@ -231,6 +232,12 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     private String configJsFile;
 
     /**
+     * File or classpath location of a properties file to use in groovy formatting.
+     */
+    @Parameter(defaultValue = "formatter-maven-plugin/groovy/groovy.properties", property = "configGroovyfile", required = true)
+    private String configGroovyFile;
+
+    /**
      * File or classpath location of a properties file to use in html formatting.
      */
     @Parameter(defaultValue = "formatter-maven-plugin/jsoup/html.properties", property = "confightmlfile", required = true)
@@ -273,6 +280,12 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
      */
     @Parameter(defaultValue = "false", property = "formatter.js.skip")
     private boolean skipJsFormatting;
+
+    /**
+     * Whether the groovy formatting is skipped.
+     */
+    @Parameter(defaultValue = "false", property = "formatter.groovy.skip")
+    private boolean skipGroovyFormatting;
 
     /**
      * Whether the html formatting is skipped.
@@ -369,8 +382,11 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     /** The js formatter. */
     private final JavascriptFormatter jsFormatter = new JavascriptFormatter();
 
+    /** The groovy formatter. */
+    private GroovyFormatter groovyFormatter = new GroovyFormatter();
+
     /** The html formatter. */
-    private final HTMLFormatter htmlFormatter = new HTMLFormatter();
+    private HTMLFormatter htmlFormatter = new HTMLFormatter();
 
     /** The xml formatter. */
     private final XMLFormatter xmlFormatter = new XMLFormatter();
@@ -699,6 +715,13 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
             } else {
                 formattedCode = this.jsFormatter.formatFile(file, originalCode, this.lineEnding);
             }
+        } else if (fileName.endsWith(".groovy") && this.groovyFormatter.isInitialized()) {
+            if (this.skipGroovyFormatting) {
+                getLog().info("Groovy formatting is skipped");
+                result = Result.SKIPPED;
+            } else {
+                formattedCode = this.groovyFormatter.formatFile(file, originalCode, this.lineEnding, dryRun);
+            }
         } else if (fileName.endsWith(".html") && this.htmlFormatter.isInitialized()) {
             if (this.skipHtmlFormatting) {
                 log.debug(Type.HTML + FormatterMojo.FORMATTING_IS_SKIPPED);
@@ -904,6 +927,10 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
         if (jsFormattingOptions != null) {
             this.jsFormatter.init(jsFormattingOptions, this);
         }
+        // Groovy Setup
+        if (configGroovyFile != null) {
+            this.groovyFormatter.init(getOptionsFromPropertiesFile(this.configGroovyFile), this);
+        }
         // Html Setup
         if (this.configHtmlFile != null) {
             this.htmlFormatter.init(this.getOptionsFromPropertiesFile(this.configHtmlFile), this);
@@ -929,10 +956,11 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
             this.cssFormatter.init(this.getOptionsFromPropertiesFile(this.configCssFile), this);
         }
         // stop the process if not config files where found
-        if (javaFormattingOptions == null && jsFormattingOptions == null && this.configHtmlFile == null
-                && this.configXmlFile == null && this.configJsonFile == null && this.configCssFile == null) {
+        if (javaFormattingOptions == null && groovyFormattingOptions == null && jsFormattingOptions == null
+                && this.configHtmlFile == null && this.configXmlFile == null && this.configJsonFile == null
+                && this.configCssFile == null) {
             throw new MojoExecutionException(
-                    "You must provide a Java, Javascript, HTML, XML, JSON, or CSS configuration file.");
+                    "You must provide a Java, Javascript, Groovy, HTML, XML, JSON, or CSS configuration file.");
         }
     }
 
