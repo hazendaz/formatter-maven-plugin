@@ -226,6 +226,11 @@
     </dependency>
     <dependency>
       <groupId>net.revelc.code.formatter</groupId>
+      <artifactId>jdt-groovy</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>net.revelc.code.formatter</groupId>
       <artifactId>jsdt-core</artifactId>
       <version>3.4.4</version>
     </dependency>
@@ -264,12 +269,14 @@
       <artifactId>plexus-xml</artifactId>
       <version>3.0.0</version>
     </dependency>
+    <!-- 
     <dependency>
       <!-- bump this and run src/build/find-transitive-eclipse-updates.sh to update eclipse deps -->
       <groupId>org.eclipse.jdt</groupId>
       <artifactId>org.eclipse.jdt.core</artifactId>
       <version>3.37.0</version>
     </dependency>
+    -->
     <dependency>
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>
