@@ -50,6 +50,8 @@ public class JavaFormatter extends AbstractCacheableFormatter implements Formatt
     public String doFormat(String code, LineEnding ending) throws IOException, BadLocationException {
         TextEdit te;
         try {
+            // TODO need to know module info per ->
+            // https://github.com/groovy/groovy-eclipse/blob/bcc52ba8edd56e7741b9d59a9d65fbca250ef671/jdt-patch/e415/org.eclipse.jdt.core/formatter/org/eclipse/jdt/core/formatter/CodeFormatterApplication.java
             IRegion[] regions = getRegions(code, exclusionPattern);
             te = this.formatter.format(CodeFormatter.K_COMPILATION_UNIT | CodeFormatter.F_INCLUDE_COMMENTS, code,
                     regions, 0, ending.getChars());
