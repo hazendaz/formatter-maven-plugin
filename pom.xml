@@ -229,6 +229,11 @@
   </dependencyManagement>
   <dependencies>
     <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
+      <version>3.3.0</version>
+    </dependency>
+    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
     </dependency>
@@ -627,6 +632,8 @@
               <ignoredUnusedDeclaredDependencies>
                 <!-- ignore runtime junit test dependency -->
                 <ignored>org.junit.jupiter:junit-jupiter-engine</ignored>
+                <!-- ignore transient dependency overridden to get newer asm jdk support -->
+                <ignored>cglib:cglib</ignored>
                 <!-- ignore transitive dependency overridden to avoid vulnerability -->
                 <ignored>commons-beanutils:commons-beanutils</ignored>
                 <!-- ignore alignment with jackson annotations -->
