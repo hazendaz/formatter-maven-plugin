@@ -196,6 +196,11 @@
   </dependencyManagement>
   <dependencies>
     <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
+      <version>3.3.0</version>
+    </dependency>
+    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
     </dependency>
@@ -299,6 +304,8 @@
             <ignore>commons-beanutils:commons-beanutils</ignore>
             <!-- ignore alignment with commons-logging to support slf4j -->
             <ignore>commons-logging:commons-logging</ignore>
+            <!-- ignore transient dependency overridden to get newer asm jdk support -->
+            <ignored>cglib:cglib</ignored>
             <!-- ignore alignment with plexus-xml as required to ensure plexus-utils uses maven 3 -->
             <ignore>org.codehaus.plexus:plexus-xml</ignore>
           </ignoredUnusedDeclaredDependencies>
