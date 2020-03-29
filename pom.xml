@@ -229,11 +229,6 @@
       <version>1.19.1</version>
     </dependency>
     <dependency>
-      <groupId>org.w3c.css</groupId>
-      <artifactId>sac</artifactId>
-      <version>1.3</version>
-    </dependency>
-    <dependency>
       <!-- provided by Maven 3.1.0 and later; might be an older version like 1.7 -->
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
