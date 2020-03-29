@@ -63,6 +63,7 @@ import net.revelc.code.formatter.javascript.JavascriptFormatter;
 import net.revelc.code.formatter.json.JsonFormatter;
 import net.revelc.code.formatter.model.ConfigReadException;
 import net.revelc.code.formatter.model.ConfigReader;
+import net.revelc.code.formatter.scala.ScalaFormatter;
 import net.revelc.code.formatter.xml.XMLFormatter;
 
 /**
@@ -82,7 +83,7 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
 
     /** The Constant DEFAULT_INCLUDES. */
     private static final String[] DEFAULT_INCLUDES = { "**/*.css", "**/*.json", "**/*.groovy", "**/*.html",
-            "**/*.java", "**/*.js", "**/*.xml" };
+            "**/*.java", "**/*.js", "**/*.scala", "**/*.xml" };
 
     /** The Constant REMOVE_TRAILING_PATTERN. */
     private static final Pattern REMOVE_TRAILING_PATTERN = Pattern.compile("\\p{Blank}+$", Pattern.MULTILINE);
@@ -238,6 +239,12 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     private String configGroovyFile;
 
     /**
+     * File or classpath location of a properties file to use in scala formatting.
+     */
+    @Parameter(defaultValue = "formatter-maven-plugin/scala/scala.properties", property = "configScalafile", required = true)
+    private String configScalaFile;
+
+    /**
      * File or classpath location of a properties file to use in html formatting.
      */
     @Parameter(defaultValue = "formatter-maven-plugin/jsoup/html.properties", property = "confightmlfile", required = true)
@@ -286,6 +293,12 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
      */
     @Parameter(defaultValue = "false", property = "formatter.groovy.skip")
     private boolean skipGroovyFormatting;
+
+    /**
+     * Whether the scala formatting is skipped.
+     */
+    @Parameter(defaultValue = "false", property = "formatter.scala.skip")
+    private boolean skipScalaFormatting;
 
     /**
      * Whether the html formatting is skipped.
@@ -384,6 +397,9 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
 
     /** The groovy formatter. */
     private GroovyFormatter groovyFormatter = new GroovyFormatter();
+
+    /** The scala formatter. */
+    private ScalaFormatter scalaFormatter = new ScalaFormatter();
 
     /** The html formatter. */
     private HTMLFormatter htmlFormatter = new HTMLFormatter();
@@ -717,10 +733,17 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
             }
         } else if (fileName.endsWith(".groovy") && this.groovyFormatter.isInitialized()) {
             if (this.skipGroovyFormatting) {
-                getLog().info("Groovy formatting is skipped");
+                log.info("Groovy" + FormatterMojo.FORMATTING_IS_SKIPPED);
                 result = Result.SKIPPED;
             } else {
                 formattedCode = this.groovyFormatter.formatFile(file, originalCode, this.lineEnding, dryRun);
+            }
+        } else if (fileName.endsWith(".scala") && this.scalaFormatter.isInitialized()) {
+            if (this.skipScalaFormatting) {
+                log.info("Scala" + FormatterMojo.FORMATTING_IS_SKIPPED);
+                result = Result.SKIPPED;
+            } else {
+                formattedCode = this.scalaFormatter.formatFile(file, originalCode, this.lineEnding, dryRun);
             }
         } else if (fileName.endsWith(".html") && this.htmlFormatter.isInitialized()) {
             if (this.skipHtmlFormatting) {
@@ -931,6 +954,10 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
         if (configGroovyFile != null) {
             this.groovyFormatter.init(getOptionsFromPropertiesFile(this.configGroovyFile), this);
         }
+        // Scala Setup
+        if (configScalaFile != null) {
+            this.scalaFormatter.init(getOptionsFromPropertiesFile(this.configScalaFile), this);
+        }
         // Html Setup
         if (this.configHtmlFile != null) {
             this.htmlFormatter.init(this.getOptionsFromPropertiesFile(this.configHtmlFile), this);
@@ -956,11 +983,12 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
             this.cssFormatter.init(this.getOptionsFromPropertiesFile(this.configCssFile), this);
         }
         // stop the process if not config files where found
-        if (javaFormattingOptions == null && groovyFormattingOptions == null && jsFormattingOptions == null
-                && this.configHtmlFile == null && this.configXmlFile == null && this.configJsonFile == null
+        if (javaFormattingOptions == null && groovyFormattingOptions == null && scalaFormattingOptions == null
+                && jsFormattingOptions == null && this.configHtmlFile == null && this.configXmlFile == null
+                && this.configJsonFile == null
                 && this.configCssFile == null) {
             throw new MojoExecutionException(
-                    "You must provide a Java, Javascript, Groovy, HTML, XML, JSON, or CSS configuration file.");
+                    "You must provide a Java, Javascript, Groovy, Scala, HTML, XML, JSON, or CSS configuration file.");
         }
     }
 
