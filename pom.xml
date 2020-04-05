@@ -162,6 +162,12 @@
         <artifactId>asm</artifactId>
         <version>9.8</version>
       </dependency>
+      <dependency>
+        <!-- transitive dependency of org.eclipse.jdt.core resolved here to avoid version range -->
+        <groupId>net.revelc.code.formatter</groupId>
+        <artifactId>jdt-groovy</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
