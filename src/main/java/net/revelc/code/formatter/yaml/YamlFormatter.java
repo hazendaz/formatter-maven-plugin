@@ -14,12 +14,11 @@
 package net.revelc.code.formatter.yaml;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.Map;
 
 import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.DumperOptions.LineBreak;
+import org.yaml.snakeyaml.Yaml;
 
 import net.revelc.code.formatter.AbstractCacheableFormatter;
 import net.revelc.code.formatter.ConfigurationSource;
@@ -35,13 +34,11 @@ public class YamlFormatter extends AbstractCacheableFormatter implements Formatt
         super.initCfg(cfg);
 
         int indent = Integer.parseInt(options.getOrDefault("indent", "4"));
-        boolean rgbAsHex = Boolean.parseBoolean(options.getOrDefault("rgbAsHex", Boolean.TRUE.toString()));
-        boolean useSourceStringValues = Boolean
-                .parseBoolean(options.getOrDefault("useSourceStringValues", Boolean.FALSE.toString()));
 
         DumperOptions dumperOptions = new DumperOptions();
         dumperOptions.setIndent(indent);
         dumperOptions.setPrettyFlow(true);
+        dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         dumperOptions.setLineBreak(LineBreak.WIN);
 
         formatter = new Yaml(dumperOptions);
@@ -50,7 +47,7 @@ public class YamlFormatter extends AbstractCacheableFormatter implements Formatt
     @Override
     protected String doFormat(String code, LineEnding ending) throws IOException {
 
-        String formattedCode = formatter.load(code.replaceAll("\\s+", ""));
+        String formattedCode = formatter.dump(code);
 
         if (code.equals(formattedCode)) {
             return null;
