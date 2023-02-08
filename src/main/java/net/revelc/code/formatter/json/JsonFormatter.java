@@ -51,6 +51,7 @@ public class JsonFormatter extends AbstractCacheableFormatter implements Formatt
         final var lineEnding = options.getOrDefault("lineending", System.lineSeparator());
         final var spaceBeforeSeparator = Boolean.parseBoolean(options.getOrDefault("spaceBeforeSeparator", "true"));
         final var useAlphabeticalOrder = Boolean.parseBoolean(options.getOrDefault("alphabeticalOrder", "false"));
+        final var allowComments = Boolean.parseBoolean(options.getOrDefault("allowComments", "false"));
 
         // Setup a pretty printer with an indenter (indenter has 4 spaces in this case)
         final DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter(" ".repeat(indent), lineEnding);
@@ -72,6 +73,10 @@ public class JsonFormatter extends AbstractCacheableFormatter implements Formatt
         this.formatter = new ObjectMapper();
         this.formatter.setDefaultPrettyPrinter(printer);
         this.formatter.enable(SerializationFeature.INDENT_OUTPUT);
+        if (allowComments) {
+            this.formatter.enable(JsonParser.Feature.ALLOW_COMMENTS);
+            this.formatter.enable(JsonParser.Feature.ALLOW_YAML_COMMENTS);
+        }
         this.formatter.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, useAlphabeticalOrder);
         this.options = options;
     }
