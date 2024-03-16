@@ -70,15 +70,16 @@ class JsonFormatterTest extends AbstractFormatterTest {
         jsonFormattingOptions.put("indent", "2");
         jsonFormattingOptions.put("spaceBeforeSeparator", "false");
         jsonFormattingOptions.put("alphabeticalOrder", "true");
+        jsonFormattingOptions.put("allowComments", "true");
 
         // Since we set the line endings via options for json, we cannot rely on CRLF inside twoPassTest.
         // The option will not be available inside json formatter init so it will use whatever the system
         // default is regardless of requesting it to be CRLF later which is ignored.
         final var expectedHash = LineEnding.LF.isSystem()
-                ? "0ca303fef968b92f3f798ff1615cd6c501ea3b754fd18f54932fd07c1dce86d2df9845817b8f521a2254c98c6e0d35b0bced3ea12113e961d3789111868897d7"
-                : "5d433f2700a2fdabfabdb309d5f807df91ad86f7a94658d4a3f2f3699ae78b2efb1de451c141f61905f1c814cd647f312ae9651454e65d124510be0573082e86";
+                ? "3886d1b96fa1b887e48ec7317c7e7aa034b30b902e6697a646401e8c04d9301e08621dd8a4c7830f8a3a51977592574020e489a5de0d8f0b799f5c412cd57bd9"
+                : "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e";
         final var lineEnding = LineEnding.LF.isSystem() ? LineEnding.LF : LineEnding.CRLF;
-        this.twoPassTest(jsonFormattingOptions, new JsonFormatter(), "someFile.json", expectedHash, lineEnding);
+        this.twoPassTest(jsonFormattingOptions, new JsonFormatter(), "someFileComments.json", expectedHash, lineEnding);
     }
 
     @Test

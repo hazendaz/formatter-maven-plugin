@@ -20,10 +20,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import net.revelc.code.formatter.AbstractCacheableFormatter;
 import net.revelc.code.formatter.ConfigurationSource;
@@ -70,13 +73,15 @@ public class JsonFormatter extends AbstractCacheableFormatter implements Formatt
         printer.indentObjectsWith(indenter);
         printer.indentArraysWith(indenter);
 
-        this.formatter = new ObjectMapper();
+        if (allowComments) {
+            this.formatter = JsonMapper.builder().enable(JsonReadFeature.ALLOW_JAVA_COMMENTS)
+                    .enable(JsonReadFeature.ALLOW_YAML_COMMENTS).build();
+        } else {
+            this.formatter = new ObjectMapper();
+        }
+
         this.formatter.setDefaultPrettyPrinter(printer);
         this.formatter.enable(SerializationFeature.INDENT_OUTPUT);
-        if (allowComments) {
-            this.formatter.enable(JsonParser.Feature.ALLOW_COMMENTS);
-            this.formatter.enable(JsonParser.Feature.ALLOW_YAML_COMMENTS);
-        }
         this.formatter.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, useAlphabeticalOrder);
         this.options = options;
     }
