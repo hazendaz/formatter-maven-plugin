@@ -852,12 +852,9 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     private String readFileAsString(final Path file) throws IOException {
         final var fileData = new StringBuilder(1000);
         try (var reader = Files.newBufferedReader(file, Charset.forName(this.encoding))) {
-            var buffer = new char[1024];
-            var numRead = 0;
-            while ((numRead = reader.read(buffer)) != -1) {
-                final var readData = String.valueOf(buffer, 0, numRead);
-                fileData.append(readData);
-                buffer = new char[1024];
+            String line;
+            while ((line = reader.readLine()) != null) {
+                fileData.append(line).append(System.lineSeparator());
             }
         }
         return fileData.toString();
